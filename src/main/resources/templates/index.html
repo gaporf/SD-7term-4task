@@ -1,0 +1,76 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>Add ToDo list</title>
+</head>
+<body>
+
+<table>
+    <th:block th:each="todolist : ${todolists}">
+        <tr>
+            <td>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</td>
+        </tr>
+        <tr>
+            <td th:text="${todolist.getName()}"></td>
+            <td>
+                <form method="POST" action="/delete-todolist">
+                    <input type="hidden" name="id" th:value="${todolist.getId()}"/>
+                    <input type="submit" value="delete">
+                </form>
+            </td>
+        </tr>
+        <th:block th:each="item : ${todolist.getItems()}">
+            <tr>
+                <td>
+                    <span th:if="${item.isDone()} == 0" th:text="${item.getName()}"></span>
+                    <s th:if="${item.isDone()} != 0" th:text="${item.getName()}"></s>
+                </td>
+                <td>
+                    <form method="POST" action="/delete-todoitem">
+                        <input th:type="hidden" th:name="todoItemId" th:value="${item.getId()}"/>
+                        <input th:type="hidden" th:name="todoListId" th:value="${todolist.getId()}"/>
+                        <input type="submit" value="delete">
+                    </form>
+                </td>
+                <td>
+                    <form method="POST" action="/invert-todoitem">
+                        <input type="hidden" name="todoListId" th:value="${todolist.getId()}"/>
+                        <input type="hidden" name="todoItemId" th:value="${item.getId()}"/>
+                        <input type="submit" value="done">
+                    </form>
+                </td>
+            </tr>
+        </th:block>
+        <tr>
+            <td>
+                <form th:object="${todoitem}" method="POST" action="/add-todoitem">
+                    <table>
+                        <tr>
+                            <td>Item name:</td>
+                            <td><input type="text" th:field="*{name}"/></td>
+                        </tr>
+                    </table>
+                    <input type="hidden" name="todoListId" th:value="${todolist.getId()}"/>
+                    <input type="submit" value="add item">
+                </form>
+            </td>
+        </tr>
+        <tr>
+            <td>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</td>
+        </tr>
+    </th:block>
+</table>
+
+<h3>Add new todolist</h3>
+<form th:object="${todolist}" method="POST" action="/add-todolist">
+    <table>
+        <tr>
+            <td><label>ToDo list name:</label></td>
+            <td><label><input type="text" th:field="*{name}"/></label></td>
+        </tr>
+    </table>
+    <input type="submit" value="add TodoList">
+</form>
+
+</body>
+</html>
